@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль {{ user.username }} · Desperate gamblers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div style="font-weight: 600;">Desperate-gamblers</div>
+        <div>
+            <a href="{{ url_for('index') }}" style="color: white; margin-right: 15px;">На главную</a>
+            <a href="{{ url_for('logout') }}" style="color: white;">Выйти</a>
+        </div>
+    </header>
+
+    <div class="profile-container">
+        <div>
+            <div class="avatar-placeholder">👤</div>
+        </div>
+        <div>
+            <h2 style="text-align: left; margin-top: 0;">{{ user.username }}</h2>
+            <p>Ваш уникальный id: <span class="id-badge">{{ user.id }}</span></p>
+            <p>Логин: <strong>{{ user.username }}</strong></p>
+            <hr>
+            <a href="{{ url_for('logout') }}" class="btn-primary" style="display: inline-block; text-decoration: none; text-align: center;">Выйти из аккаунта</a>
+        </div>
+    </div>
+</body>
+</html>

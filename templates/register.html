@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация · Desperate gamblers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .auth-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Горизонтальное центрирование */
+            justify-content: flex-start; /* Выравнивание по верху */
+            padding-top: 60px; /* Отступ сверху */
+            min-height: calc(100vh - 70px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="font-weight: 600;">Desperate-gamblers</div>
+    </header>
+
+    <div class="auth-wrapper">
+        <h2>Создать аккаунт</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="auth-container">
+            <form method="POST">
+                <label for="username">Придумайте логин</label>
+                <input type="text" id="username" name="username" placeholder="Логин" required>
+
+                <label for="password">Придумайте пароль</label>
+                <input type="password" id="password" name="password" placeholder="Пароль" required>
+
+                <button type="submit" class="btn-primary">Зарегистрироваться</button>
+            </form>
+        </div>
+        <div class="footer-link">
+            Уже есть аккаунт? <a href="{{ url_for('login')}}">Войти</a>.
+        </div>
+    </div>
+</body>
+</html>
