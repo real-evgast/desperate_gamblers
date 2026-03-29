@@ -1,4 +1,6 @@
-from app import *
+from app import app
+from flask import redirect, url_for, session, render_template
+from . import Amodels
 @app.route('/', methods = ["GET"])
 def index():
     if 'user_id' not in session:
@@ -6,7 +8,7 @@ def index():
     else:
         current_user_id = session['user_id']
 
-        user = User.User.query.get(current_user_id)
+        user = Amodels.User.query.get(current_user_id)
 
         if user.editing:
             """
@@ -37,7 +39,7 @@ def index():
                 }
             ]
             """
-            parties_data = Match.Match.query.all()
+            parties_data = Amodels.Match.query.all()
             return render_template('index.html', parties=parties_data)
         else:
             return "Администратор сайта ещё не дал вам доступ к сайту, если вы случайный пользователь то вы его никогда и не получите. А если мой друг, то ждите :)"
