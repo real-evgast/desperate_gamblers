@@ -3,51 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация · Desperate gamblers</title>
+    <title>Регистрация · Desperate Gamblers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        .auth-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Горизонтальное центрирование */
-            justify-content: flex-start; /* Выравнивание по верху */
-            padding-top: 60px; /* Отступ сверху */
-            min-height: calc(100vh - 70px);
-        }
-    </style>
 </head>
 <body>
-    <header>
-        <div style="font-weight: 600;">Desperate-gamblers</div>
-    </header>
+    <main class="auth-layout">
+        <section class="auth-side">
+            <div class="auth-side__content">
+                <div class="brand">
+                    <span class="brand__eyebrow">house account</span>
+                    <span class="brand__name">Desperate Gamblers</span>
+                </div>
 
-    <div class="auth-wrapper">
-        <h2>Создать аккаунт</h2>
+                <div class="eyebrow">Новый участник</div>
+                <h1 class="auth-title">Создайте доступ к личному профилю</h1>
+                <p class="auth-copy">
+                    Регистрация открывает вход в закрытый интерфейс проекта: карточки матчей, личную страницу
+                    игрока и управление результатами внутри тёмного клуба.
+                </p>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <div class="flash-messages">
-              {% for category, message in messages %}
-                <div class="flash {{ category }}">{{ message }}</div>
-              {% endfor %}
+                <div class="auth-kpis">
+                    <div class="auth-kpi">
+                        <div class="auth-kpi__value">ID</div>
+                        <div class="auth-kpi__label">Личный профиль</div>
+                    </div>
+                    <div class="auth-kpi">
+                        <div class="auth-kpi__value">Safe</div>
+                        <div class="auth-kpi__label">Отдельный вход</div>
+                    </div>
+                    <div class="auth-kpi">
+                        <div class="auth-kpi__value">Club</div>
+                        <div class="auth-kpi__label">Закрытый доступ</div>
+                    </div>
+                </div>
             </div>
-          {% endif %}
-        {% endwith %}
 
-        <div class="auth-container">
-            <form method="POST">
-                <label for="username">Придумайте логин</label>
-                <input type="text" id="username" name="username" placeholder="Логин" required>
+            <div class="pill-list">
+                <span class="pill">Тёмная тема</span>
+                <span class="pill">Новый аккаунт</span>
+                <span class="pill">История партий</span>
+            </div>
+        </section>
 
-                <label for="password">Придумайте пароль</label>
-                <input type="password" id="password" name="password" placeholder="Пароль" required>
+        <section class="auth-card">
+            <div class="auth-card__head">
+                <div class="eyebrow">Регистрация</div>
+                <h2 class="auth-card__title">Открыть профиль</h2>
+                <p class="auth-card__copy">
+                    Придумайте логин и пароль. Контракты формы сохранены под текущий бэкенд.
+                </p>
+            </div>
 
-                <button type="submit" class="btn-primary">Зарегистрироваться</button>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="flash-messages">
+                  {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="auth-form">
+                <div class="field-group">
+                    <label for="username">Логин</label>
+                    <input type="text" id="username" name="username" placeholder="Придумайте логин" required>
+                </div>
+
+                <div class="field-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" placeholder="Придумайте пароль" required>
+                </div>
+
+                <div class="auth-actions">
+                    <button type="submit" class="btn-primary">Зарегистрироваться</button>
+                </div>
             </form>
-        </div>
-        <div class="footer-link">
-            Уже есть аккаунт? <a href="{{ url_for('login')}}">Войти</a>.
-        </div>
-    </div>
+
+            <p class="footer-link">
+                Уже есть аккаунт?
+                <a href="{{ url_for('login') }}">Войти</a>
+            </p>
+        </section>
+    </main>
 </body>
 </html>

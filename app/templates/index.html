@@ -3,208 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная · Desperate-gamblers</title>
+    <title>Главная · Desperate Gamblers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body {
-            /* Возвращаем черный фон */
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        #night-sky {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .score {
-            font-weight: bold;
-            padding: 2px 8px;
-            border-radius: 12px;
-        }
-        .score.positive { color: #28a745; }
-        .score.negative { color: #dc3545; }
-        .score-icon { margin-right: 4px; }
-
-        header, .container {
-            position: relative;
-            z-index: 1;
-            background-color: transparent;
-        }
-    </style>
 </head>
 <body>
-    <canvas id="night-sky"></canvas>
+    <header class="topbar">
+        <div class="topbar__inner">
+            <a href="{{ url_for('index') }}" class="brand">
+                <span class="brand__eyebrow">private ledger</span>
+                <span class="brand__name">Desperate Gamblers</span>
+            </a>
 
-    <header>
-        <div style="font-weight: 600;">Desperate-gamblers</div>
-        <div>
-            <a href="{{ url_for('profile') }}" style="color: white; margin-right: 15px;">Профиль</a>
-            <a href="{{ url_for('logout') }}" style="color: white;">Выйти</a>
+            <nav class="topbar__nav">
+                <a href="{{ url_for('profile') }}" class="nav-link">Профиль</a>
+                <a href="{{ url_for('create_match') }}" class="nav-link">Создать матч</a>
+                <a href="{{ url_for('logout') }}" class="nav-link nav-link--accent">Выйти</a>
+            </nav>
         </div>
     </header>
 
-    <div class="container">
-        <h2>Последние партии</h2>
-        <div class="profile-container">
-            <a href="{{ url_for('create_match') }}" class="btn-primary" style="display: inline-block; text-decoration: none; text-align: center;">Создать новую партию</a>
-        </div>
-        <div class="parties-grid">
-            {% for party in parties %}
-            <div class="party-tile">
-                <div class.party-header">
-                    <span class="party-game-name">{{ party.game_name }}</span>
-                    <span class="party-date">{{ party.date.strftime('%Y-%m-%d') }}</span>
+    <main class="page">
+        <div class="site-shell">
+            <section class="hero">
+                <div class="hero__grid">
+                    <div class="hero__content">
+                        <div class="eyebrow">Журнал партий</div>
+                        <h1 class="hero__title">Тёмный зал последних матчей</h1>
+                        <p class="hero__text">
+                            Новый интерфейс собран вокруг карточек партий, быстрой навигации и спокойной ночной атмосферы.
+                            Всё осталось совместимо с текущим Flask-бэкендом и данными матчей.
+                        </p>
+
+                        <div class="hero__actions">
+                            <a href="{{ url_for('create_match') }}" class="btn-primary">Создать новую партию</a>
+                            <a href="{{ url_for('profile') }}" class="btn-secondary">Открыть профиль</a>
+                        </div>
+                    </div>
+
+                    <aside class="hero__aside">
+                        <div class="stat-card">
+                            <div class="stat-card__label">Всего матчей</div>
+                            <div class="stat-card__value">{{ parties|length }}</div>
+                            <div class="stat-card__note">Все записи, которые сейчас доступны на главной странице.</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card__label">Режим</div>
+                            <div class="stat-card__value">Casino Noir</div>
+                            <div class="stat-card__note">Новый тёмный интерфейс с мягкими акцентами и карточной композицией.</div>
+                        </div>
+                    </aside>
                 </div>
-                <div class="party-body">
+            </section>
+
+            <section class="page-section">
+                <div class="section-head">
+                    <div>
+                        <div class="eyebrow">История</div>
+                        <h2 class="section-title">Последние партии</h2>
+                        <p class="section-copy">
+                            Карточки остаются совместимыми даже если часть данных в матче не заполнена полностью.
+                        </p>
+                    </div>
+
+                    <div class="section-actions">
+                        <a href="{{ url_for('create_match') }}" class="inline-action">+ Новая партия</a>
+                    </div>
+                </div>
+
+                {% if parties %}
+                <div class="matches-grid">
+                    {% for party in parties %}
                     {% set players = party.player_list.split(', ') if party.player_list else [] %}
-                    {% set winner = [party.result] %}
-                    {% set all_players = winner + players %}
+                    {% set winner_name = party.result if party.result else 'Победитель не указан' %}
+                    {% set all_players = [winner_name] + players %}
+                    {% set scores = party.scores if party.scores else [] %}
+                    <article class="match-card">
+                        <div class="match-card__head">
+                            <div>
+                                <div class="tile-label">Матч</div>
+                                <h3 class="match-card__title">{{ party.game_name or 'Без названия игры' }}</h3>
+                            </div>
+                            <div class="match-card__date">
+                                {{ party.date.strftime('%Y-%m-%d') if party.date else 'Дата не указана' }}
+                            </div>
+                        </div>
 
-                    <p><strong>Участники:</strong></p>
-                    <ul>
-                        {% for player, score in zip(all_players, party.scores) %}
-                        <li style="margin-bottom: 8px;">
-                            <span>{{ player }}</span>:
-                            {% if score > 0 %}
-                                <span class="score positive"><span class="score-icon">▲</span>{{ score }}</span>
-                            {% elif score < 0 %}
-                                <span class="score negative"><span class="score-icon">▼</span>{{ score }}</span>
+                        <div class="match-card__players">
+                            {% if scores %}
+                                {% for score in scores %}
+                                {% set player_name = all_players[loop.index0] if loop.index0 < all_players|length else 'Игрок ' ~ loop.index %}
+                                <div class="player-chip {% if loop.first %}player-chip--winner{% endif %}">
+                                    <div class="player-chip__name">
+                                        {% if loop.first %}
+                                        <span class="winner-badge">★</span>
+                                        {% endif %}
+                                        <span class="player-name-text">{{ player_name }}</span>
+                                    </div>
+
+                                    {% if score > 0 %}
+                                    <span class="score-pill score-pill--positive">+{{ score }}</span>
+                                    {% elif score < 0 %}
+                                    <span class="score-pill score-pill--negative">{{ score }}</span>
+                                    {% else %}
+                                    <span class="score-pill score-pill--neutral">{{ score }}</span>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
                             {% else %}
-                                <span class="score">{{ score }}</span>
+                            <div class="empty-state">
+                                <h4 class="empty-state__title">Очки пока не заполнены</h4>
+                                <p>Матч есть в базе, но бэкенд ещё не передал полный набор данных для отображения результатов.</p>
+                            </div>
                             {% endif %}
-                        </li>
-                        {% endfor %}
-                    </ul>
+                        </div>
+                    </article>
+                    {% endfor %}
                 </div>
-            </div>
-            {% endfor %}
+                {% else %}
+                <div class="empty-state">
+                    <h3 class="empty-state__title">История пока пустая</h3>
+                    <p>Создайте первую партию, и она появится здесь в новом тёмном журнале матчей.</p>
+                </div>
+                {% endif %}
+            </section>
         </div>
-    </div>
-
-    <script>
-    const canvas = document.getElementById('night-sky');
-    const ctx = canvas.getContext('2d');
-
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-    const backgroundColor = '#000'; // Возвращаем черный фон
-
-    window.onresize = () => {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        stars.length = 0;
-        createStars();
-    };
-
-    let stars = [];
-    let comets = [];
-
-    function random(min, max) {
-        return Math.random() * (max - min) + min;
-    }
-
-    function createStars() {
-        for (let i = 0; i < 800; i++) {
-            stars.push({
-                x: random(0, width),
-                y: random(0, height),
-                radius: random(0.5, 1.5),
-                alpha: random(0.5, 1),
-                twinkle: random(0.002, 0.008) * (Math.random() > 0.5 ? 1 : -1)
-            });
-        }
-    }
-
-    function createComet() {
-        const side = Math.floor(random(0, 4));
-        let x, y, dx, dy;
-
-        switch(side) {
-            case 0: x = random(0, width); y = -10; dx = random(-2, 2); dy = random(2, 4); break;
-            case 1: x = width + 10; y = random(0, height); dx = random(-4, -2); dy = random(-2, 2); break;
-            case 2: x = random(0, width); y = height + 10; dx = random(-2, 2); dy = random(-4, -2); break;
-            case 3: x = -10; y = random(0, height); dx = random(2, 4); dy = random(-2, 2); break;
-        }
-
-        comets.push({
-            x, y, dx, dy,
-            radius: random(2, 3.5),
-            alpha: 1,
-            decay: random(0.001, 0.003),
-            tail: []
-        });
-    }
-
-    function draw() {
-        ctx.fillStyle = backgroundColor;
-        ctx.fillRect(0, 0, width, height);
-
-        ctx.fillStyle = 'white';
-        stars.forEach(star => {
-            ctx.save();
-            ctx.globalAlpha = star.alpha;
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-
-            star.alpha += star.twinkle;
-            if (star.alpha <= 0.5 || star.alpha >= 1) {
-                star.twinkle *= -1;
-            }
-        });
-
-        comets.forEach((comet, index) => {
-            for (let i = 0; i < comet.tail.length; i++) {
-                const p = comet.tail[i];
-                const alpha = comet.alpha * (i / comet.tail.length);
-                ctx.beginPath();
-                ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.7})`;
-                ctx.arc(p.x, p.y, p.radius * (i / comet.tail.length), 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            ctx.save();
-            ctx.globalAlpha = comet.alpha;
-            ctx.fillStyle = '#fff';
-            ctx.shadowColor = '#fff';
-            ctx.shadowBlur = 25;
-            ctx.beginPath();
-            ctx.arc(comet.x, comet.y, comet.radius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-
-            comet.tail.unshift({x: comet.x, y: comet.y, radius: comet.radius});
-            if (comet.tail.length > 35) {
-                comet.tail.pop();
-            }
-
-            comet.x += comet.dx;
-            comet.y += comet.dy;
-            comet.alpha -= comet.decay;
-
-            if (comet.alpha <= 0.05) {
-                comets.splice(index, 1);
-            }
-        });
-    }
-
-    function animate() {
-        draw();
-        requestAnimationFrame(animate);
-    }
-
-    createStars();
-    setInterval(createComet, 2500);
-    animate();
-
-    </script>
+    </main>
 </body>
 </html>

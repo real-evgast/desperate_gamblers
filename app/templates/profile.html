@@ -3,29 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профиль {{ user.username }} · Desperate gamblers</title>
+    <title>Профиль {{ user.username }} · Desperate Gamblers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <div style="font-weight: 600;">Desperate-gamblers</div>
-        <div>
-            <a href="{{ url_for('index') }}" style="color: white; margin-right: 15px;">На главную</a>
-            <a href="{{ url_for('logout') }}" style="color: white;">Выйти</a>
+    <header class="topbar">
+        <div class="topbar__inner">
+            <a href="{{ url_for('index') }}" class="brand">
+                <span class="brand__eyebrow">player room</span>
+                <span class="brand__name">Desperate Gamblers</span>
+            </a>
+
+            <nav class="topbar__nav">
+                <a href="{{ url_for('index') }}" class="nav-link">Главная</a>
+                <a href="{{ url_for('logout') }}" class="nav-link nav-link--accent">Выйти</a>
+            </nav>
         </div>
     </header>
 
-    <div class="profile-container">
-        <div>
-            <div class="avatar-placeholder">👤</div>
+    <main class="page">
+        <div class="site-shell">
+            <section class="hero">
+                <div class="hero__grid">
+                    <div class="hero__content">
+                        <div class="eyebrow">Личный кабинет</div>
+                        <h1 class="profile-name">{{ user.username }}</h1>
+                        <p class="profile-copy">
+                            Здесь собран ваш игровой профиль: идентификатор, логин и быстрый доступ назад к истории матчей.
+                        </p>
+
+                        <div class="profile-actions">
+                            <a href="{{ url_for('index') }}" class="btn-primary">Вернуться к матчам</a>
+                            <a href="{{ url_for('logout') }}" class="btn-secondary">Выйти из аккаунта</a>
+                        </div>
+                    </div>
+
+                    <aside class="hero__aside">
+                        <div class="stat-card">
+                            <div class="stat-card__label">Ваш ID</div>
+                            <div class="stat-card__value mono">#{{ user.id }}</div>
+                            <div class="stat-card__note">Уникальный номер игрока в системе.</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-card__label">Статус</div>
+                            <div class="stat-card__value">Online</div>
+                            <div class="stat-card__note">Профиль открыт и готов к просмотру матчей.</div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="page-section">
+                <div class="profile-layout">
+                    <article class="profile-card profile-card--identity">
+                        <div class="avatar-shell">DG</div>
+                        <div class="eyebrow">Identity</div>
+                        <h2 class="section-title" style="font-size: 30px;">Карточка игрока</h2>
+                        <p class="section-copy">
+                            Минималистичный профиль в стиле ночного клуба: тёмные панели, акцентное золото и чёткая иерархия данных.
+                        </p>
+                    </article>
+
+                    <article class="profile-card">
+                        <div class="section-head">
+                            <div>
+                                <div class="eyebrow">Данные</div>
+                                <h2 class="section-title" style="font-size: 30px;">Основная информация</h2>
+                            </div>
+                        </div>
+
+                        <div class="profile-meta">
+                            <div class="meta-item">
+                                <span class="info-label">Уникальный ID</span>
+                                <span class="id-badge">{{ user.id }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="info-label">Логин</span>
+                                <span class="info-value">{{ user.username }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="info-label">Раздел</span>
+                                <span class="info-value info-value--muted">Личный профиль</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
         </div>
-        <div>
-            <h2 style="text-align: left; margin-top: 0;">{{ user.username }}</h2>
-            <p>Ваш уникальный id: <span class="id-badge">{{ user.id }}</span></p>
-            <p>Логин: <strong>{{ user.username }}</strong></p>
-            <hr>
-            <a href="{{ url_for('logout') }}" class="btn-primary" style="display: inline-block; text-decoration: none; text-align: center;">Выйти из аккаунта</a>
-        </div>
-    </div>
+    </main>
 </body>
 </html>

@@ -6,9 +6,7 @@ def index():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     else:
-        current_user_id = session['user_id']
-
-        user = Amodels.User.query.get(current_user_id)
+        user = Amodels.User.query.get(session['user_id'])
 
         if user.editing:
             """
@@ -42,4 +40,5 @@ def index():
             parties_data = Amodels.Match.query.all()
             return render_template('index.html', parties=parties_data)
         else:
-            return "Администратор сайта ещё не дал вам доступ к сайту, если вы случайный пользователь то вы его никогда и не получите. А если мой друг, то ждите :)"
+            notification = "Администратор сайта ещё не дал вам доступ к сайту, если вы случайный пользователь то вы его никогда и не получите. А если мой друг - то ждите :)"
+            return render_template('notification.html', notification=notification)

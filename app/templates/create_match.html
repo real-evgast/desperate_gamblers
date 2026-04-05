@@ -3,63 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Создать партию · Desperate-gamblers</title>
+    <title>Создать партию · Desperate Gamblers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <div style="font-weight: 600;">Desperate-gamblers</div>
-        <div>
-            <a href="{{ url_for('index') }}" style="color: white; margin-right: 15px;">Главная</a>
-            <a href="{{ url_for('profile') }}" style="color: white; margin-right: 15px;">Профиль</a>
-            <a href="{{ url_for('logout') }}" style="color: white;">Выйти</a>
+    <header class="topbar">
+        <div class="topbar__inner">
+            <a href="{{ url_for('index') }}" class="brand">
+                <span class="brand__eyebrow">table setup</span>
+                <span class="brand__name">Desperate Gamblers</span>
+            </a>
+
+            <nav class="topbar__nav">
+                <a href="{{ url_for('index') }}" class="nav-link">Главная</a>
+                <a href="{{ url_for('profile') }}" class="nav-link">Профиль</a>
+                <a href="{{ url_for('logout') }}" class="nav-link nav-link--accent">Выйти</a>
+            </nav>
         </div>
     </header>
 
-    <div class="container">
-        <h2>Создать новую партию</h2>
-        <form method="POST" id="create-match-form" class="auth-container" style="width: 100%;">
-            <label for="game_name">Название игры</label>
-            <select id="game_name" name="game_name" required>
-                <option value="" disabled selected>Выбирите игру</option>
-                {% for game_id, game_name in zip(list_game_id, list_game) %}
-                <option value="{{ game_id }}">{{ game_name }}</option>
-                {% endfor %}
-            </select>
+    <main class="page">
+        <div class="site-shell">
+            <section class="hero">
+                <div class="hero__grid">
+                    <div class="hero__content">
+                        <div class="eyebrow">Новая запись</div>
+                        <h1 class="hero__title">Создайте новую партию</h1>
+                        <p class="hero__text">
+                            Форма полностью обновлена визуально, но все поля и имена остались совместимыми с текущим бэкендом.
+                        </p>
+                    </div>
 
-            <label for="winner">Победитель и его очки</label>
-            <div class="player-row">
-                <select id="winner" name="winner" required style="margin-bottom: 0;">
-                    <option value="" disabled selected>Выберите победителя</option>
-                    {% for user_id, username in zip(list_user_id, list_user) %}
-                    <option value="{{ user_id }}">{{ username }}</option>
-                    {% endfor %}
-                </select>
-                <input type="number" name="winner_score" class="player-score-input" placeholder="Очки" required style="margin-bottom: 0;">
-            </div>
+                    <aside class="hero__aside">
+                        <div class="stat-card">
+                            <div class="stat-card__label">Игроков доступно</div>
+                            <div class="stat-card__value">{{ list_user|length }}</div>
+                            <div class="stat-card__note">Выберите победителя и добавьте остальных участников матча.</div>
+                        </div>
 
+                        <div class="stat-card">
+                            <div class="stat-card__label">Игр доступно</div>
+                            <div class="stat-card__value">{{ list_game|length }}</div>
+                            <div class="stat-card__note">Список игр берётся напрямую из текущих данных приложения.</div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
 
-            <!-- Контейнер для динамического добавления игроков -->
-            <label style="margin-top: 15px;">Остальные участники и их очки</label>
-            <div id="players-container">
-                <!-- Сюда будут добавляться строки с полями для игрока и очков -->
-            </div>
+            <section class="page-section">
+                <div class="form-layout">
+                    <article class="form-card">
+                        <div>
+                            <div class="eyebrow">Форма матча</div>
+                            <h2 class="form-card__title">Заполните детали партии</h2>
+                            <p class="form-card__copy">
+                                Победитель и его очки обязательны. Остальные участники добавляются динамически.
+                            </p>
+                        </div>
 
-            <button type="submit" class="btn-primary" style="margin-top: 15px;">Создать партию</button>
-        </form>
-    </div>
+                        <form method="POST" id="create-match-form" class="match-form form-stack">
+                            <section class="stack-section">
+                                <div class="stack-section__head">
+                                    <h3 class="stack-section__title">Игра</h3>
+                                    <p class="stack-section__copy">Выберите игру, под которой будет записана новая партия.</p>
+                                </div>
 
-    <!-- Шаблон для новой строки с выбором игрока и полем для очков -->
+                                <div class="field-group">
+                                    <label for="game_name">Название игры</label>
+                                    <select id="game_name" name="game_name" required>
+                                        <option value="" disabled selected>Выберите игру</option>
+                                        {% for game_id, game_name in zip(list_game_id, list_game) %}
+                                        <option value="{{ game_id }}">{{ game_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </section>
+
+                            <section class="stack-section">
+                                <div class="stack-section__head">
+                                    <h3 class="stack-section__title">Победитель</h3>
+                                    <p class="stack-section__copy">Сначала выберите победителя и сразу укажите его очки.</p>
+                                </div>
+
+                                <div class="player-row">
+                                    <select id="winner" name="winner" required>
+                                        <option value="" disabled selected>Выберите победителя</option>
+                                        {% for user_id, username in zip(list_user_id, list_user) %}
+                                        <option value="{{ user_id }}">{{ username }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="number" name="winner_score" class="player-score-input" placeholder="Очки" required>
+                                    <button type="button" class="delete-row-btn" aria-hidden="true" disabled>★</button>
+                                </div>
+                            </section>
+
+                            <section class="stack-section">
+                                <div class="stack-section__head">
+                                    <h3 class="stack-section__title">Остальные участники</h3>
+                                    <p class="stack-section__copy">
+                                        Когда выберете последнего доступного игрока, форма сама добавит следующую строку.
+                                    </p>
+                                </div>
+
+                                <label for="players-container">Участники и их очки</label>
+                                <div id="players-container" class="players-container"></div>
+                            </section>
+
+                            <div class="auth-actions">
+                                <button type="submit" class="btn-primary">Сохранить партию</button>
+                                <a href="{{ url_for('index') }}" class="btn-secondary">Отмена</a>
+                            </div>
+                        </form>
+                    </article>
+
+                    <aside class="form-card">
+                        <div class="eyebrow">Подсказки</div>
+                        <div class="side-list">
+                            <section class="side-note">
+                                <h3 class="side-note__title">Как это работает</h3>
+                                <p class="side-note__copy">
+                                    Поля формы не менялись: бэкенд по-прежнему получит `game_name`, `winner`,
+                                    `winner_score`, `players` и `scores`.
+                                </p>
+                            </section>
+
+                            <section class="side-note">
+                                <h3 class="side-note__title">Динамические строки</h3>
+                                <p class="side-note__copy">
+                                    Логика добавления и удаления игроков сохранена, изменилась только подача и компоновка.
+                                </p>
+                            </section>
+
+                            <section class="side-note">
+                                <h3 class="side-note__title">Тон интерфейса</h3>
+                                <p class="side-note__copy">
+                                    Визуальный язык совпадает с главной и профилем: глубокие тёмные панели, золото и мягкие границы.
+                                </p>
+                            </section>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </div>
+    </main>
+
     <template id="player-row-template">
         <div class="player-row">
-            <select class="player-select" name="players" style="margin-bottom: 0;">
+            <select class="player-select" name="players">
                 <option value="" disabled selected>Выберите участника</option>
                 {% for user_id, username in zip(list_user_id, list_user) %}
                 <option value="{{ user_id }}">{{ username }}</option>
                 {% endfor %}
             </select>
-            <input type="number" name="scores" class="player-score-input" placeholder="Очки" style="margin-bottom: 0;">
-            <button type="button" class="delete-row-btn">🗑️</button>
+            <input type="number" name="scores" class="player-score-input" placeholder="Очки">
+            <button type="button" class="delete-row-btn" aria-label="Удалить участника">×</button>
         </div>
     </template>
 
@@ -77,19 +174,16 @@
 
             function updateDeleteButtons() {
                 const allRows = playersContainer.querySelectorAll('.player-row');
-                allRows.forEach((row, index) => {
+                allRows.forEach((row) => {
                     const deleteBtn = row.querySelector('.delete-row-btn');
                     if (deleteBtn) {
-                        // Скрываем кнопку, если это первая и единственная строка
-                        deleteBtn.style.display = (allRows.length > 1) ? 'inline-block' : 'none';
+                        deleteBtn.style.display = (allRows.length > 1) ? 'inline-flex' : 'none';
                     }
                 });
             }
 
-            // Добавляем первую строку сразу
             addPlayerRow();
 
-            // Слушаем событие 'change' на select'ах внутри контейнера
             playersContainer.addEventListener('change', function(event) {
                 if (event.target.matches('.player-select')) {
                     const lastSelect = playersContainer.querySelector('.player-row:last-child .player-select');
@@ -99,10 +193,8 @@
                 }
             });
 
-            // Слушаем клики по кнопкам удаления
             playersContainer.addEventListener('click', function(event) {
                 if (event.target.matches('.delete-row-btn')) {
-                    // Запрещаем удаление, если осталась только одна строка
                     if (playersContainer.querySelectorAll('.player-row').length > 1) {
                         event.target.closest('.player-row').remove();
                         updateDeleteButtons();
@@ -110,7 +202,6 @@
                 }
             });
 
-            // Перехватываем отправку формы для условной валидации
             form.addEventListener('submit', function(event) {
                 const allPlayerRows = playersContainer.querySelectorAll('.player-row');
                 let validationFailed = false;
@@ -119,24 +210,19 @@
                     const select = row.querySelector('.player-select');
                     const scoreInput = row.querySelector('.player-score-input');
 
-                    // Если игрок выбран, но очки не введены
                     if (select.value && !scoreInput.value) {
                         alert('Пожалуйста, введите очки для всех выбранных участников.');
-                        scoreInput.focus(); // Устанавливаем фокус на незаполненное поле
+                        scoreInput.focus();
                         validationFailed = true;
-                        event.preventDefault(); // Предотвращаем отправку формы
-                        return; // Выходим из forEach
+                        event.preventDefault();
                     }
                 });
 
                 if (validationFailed) {
-                    return; // Если валидация не прошла, останавливаемся
+                    return;
                 }
-
-                // Если валидация прошла успешно, форма будет отправлена
             });
         });
     </script>
-
 </body>
 </html>

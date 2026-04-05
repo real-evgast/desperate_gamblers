@@ -3,40 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход · Desperate-gamblers</title>
+    <title>Вход · Desperate Gamblers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        .auth-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Горизонтальное центрирование */
-            justify-content: flex-start; /* Выравнивание по верху */
-            padding-top: 60px; /* Отступ сверху */
-            min-height: calc(100vh - 70px);
-        }
-    </style>
 </head>
 <body>
-    <header>
-        <div style="font-weight: 600;">Desperate-gamblers</div>
-    </header>
+    <main class="auth-layout">
+        <section class="auth-side">
+            <div class="auth-side__content">
+                <div class="brand">
+                    <span class="brand__eyebrow">private tables</span>
+                    <span class="brand__name">Desperate Gamblers</span>
+                </div>
 
-    <div class="auth-wrapper">
-        <h2>Вход</h2>
-        <div class="auth-container">
-            <form method="POST">
-                <label for="username">Логин</label>
-                <input type="text" id="username" name="username" placeholder="Введите логин" required>
+                <h1 class="auth-title">Вход в закрытый зал матчей</h1>
+                <p class="auth-copy">
+                    Вся история партий, результаты и личные профили собраны в одном тёмном интерфейсе.
+                    Войдите в аккаунт, чтобы открыть столы, участников и последние матчи.
+                </p>
 
-                <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+                <div class="auth-kpis">
+                    <div class="auth-kpi">
+                        <div class="auth-kpi__value">01</div>
+                        <div class="auth-kpi__label">Аккаунт на игрока</div>
+                    </div>
+                    <div class="auth-kpi">
+                        <div class="auth-kpi__value">24/7</div>
+                        <div class="auth-kpi__label">Доступ к истории</div>
+                    </div>
+                    <div class="auth-kpi">
+                        <div class="auth-kpi__value">Dark</div>
+                        <div class="auth-kpi__label">Нуар атмосфера</div>
+                    </div>
+                </div>
+            </div>
 
-                <button type="submit" class="btn-primary">Войти</button>
+            <div class="pill-list">
+                <span class="pill">Матчи</span>
+                <span class="pill">Игроки</span>
+                <span class="pill">Профили</span>
+            </div>
+        </section>
+
+        <section class="auth-card">
+            <div class="auth-card__head">
+                <div class="eyebrow">Вход</div>
+                <h2 class="auth-card__title">С возвращением</h2>
+                <p class="auth-card__copy">
+                    Используйте свой логин и пароль, чтобы продолжить работу с матчами.
+                </p>
+            </div>
+
+            <form method="POST" class="auth-form">
+                <div class="field-group">
+                    <label for="username">Логин</label>
+                    <input type="text" id="username" name="username" placeholder="Введите логин" required>
+                </div>
+
+                <div class="field-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+                </div>
+
+                <div class="auth-actions">
+                    <button type="submit" class="btn-primary">Войти в систему</button>
+                </div>
             </form>
-        </div>
-        <div class="footer-link">
-            Ещё нет аккаунта? <a href="{{ url_for('register')}}">Создать аккаунт</a>.
-        </div>
-    </div>
+
+            <p class="footer-link">
+                Еще нет аккаунта?
+                <a href="{{ url_for('register') }}">Создать аккаунт</a>
+            </p>
+        </section>
+    </main>
 </body>
 </html>

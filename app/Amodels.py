@@ -23,6 +23,7 @@ class User_match(db.Model):
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     game_name = db.Column(db.String(100), nullable=False)
+    type = db.Column(db.Integer, nullable=False)
 
 class Game_match(db.Model):
     games_id = db.Column(db.Integer, db.ForeignKey('games.id'), primary_key=True)
