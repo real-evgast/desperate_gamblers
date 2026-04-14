@@ -17,7 +17,6 @@
             <nav class="topbar__nav">
                 <a href="{{ url_for('index') }}" class="nav-link">Главная</a>
                 <a href="{{ url_for('profile') }}" class="nav-link">Профиль</a>
-                <a href="{{ url_for('logout') }}" class="nav-link nav-link--accent">Выйти</a>
             </nav>
         </div>
     </header>
@@ -29,83 +28,54 @@
                     <div class="hero__content">
                         <div class="eyebrow">Новая запись</div>
                         <h1 class="hero__title">Создайте новую партию</h1>
-                        <p class="hero__text">
-                            Форма полностью обновлена визуально, но все поля и имена остались совместимыми с текущим бэкендом.
-                        </p>
                     </div>
-
-                    <aside class="hero__aside">
-                        <div class="stat-card">
-                            <div class="stat-card__label">Игроков доступно</div>
-                            <div class="stat-card__value">{{ list_user|length }}</div>
-                            <div class="stat-card__note">Выберите победителя и добавьте остальных участников матча.</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-card__label">Игр доступно</div>
-                            <div class="stat-card__value">{{ list_game|length }}</div>
-                            <div class="stat-card__note">Список игр берётся напрямую из текущих данных приложения.</div>
-                        </div>
-                    </aside>
                 </div>
             </section>
 
             <section class="page-section">
-                <div class="form-layout">
+                <div class="form-layout form-layout--single">
                     <article class="form-card">
                         <div>
                             <div class="eyebrow">Форма матча</div>
                             <h2 class="form-card__title">Заполните детали партии</h2>
-                            <p class="form-card__copy">
-                                Победитель и его очки обязательны. Остальные участники добавляются динамически.
-                            </p>
                         </div>
 
                         <form method="POST" id="create-match-form" class="match-form form-stack">
                             <section class="stack-section">
                                 <div class="stack-section__head">
-                                    <h3 class="stack-section__title">Игра</h3>
-                                    <p class="stack-section__copy">Выберите игру, под которой будет записана новая партия.</p>
+                                    <h3 class="stack-section__title">Параметры матча</h3>
                                 </div>
 
-                                <div class="field-group">
-                                    <label for="game_name">Название игры</label>
-                                    <select id="game_name" name="game_name" required>
-                                        <option value="" disabled selected>Выберите игру</option>
-                                        {% for game_id, game_name in zip(list_game_id, list_game) %}
-                                        <option value="{{ game_id }}">{{ game_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </section>
+                                <div class="field-grid field-grid--triple">
+                                    <div class="field-group">
+                                        <label for="game_name">Название игры</label>
+                                        <select id="game_name" name="game_name" required>
+                                            <option value="" disabled selected>Выберите игру</option>
+                                            {% for game_id, game_name in zip(list_game_id, list_game) %}
+                                            <option value="{{ game_id }}">{{ game_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
 
-                            <section class="stack-section">
-                                <div class="stack-section__head">
-                                    <h3 class="stack-section__title">Победитель</h3>
-                                    <p class="stack-section__copy">Сначала выберите победителя и сразу укажите его очки.</p>
-                                </div>
-
-                                <div class="player-row">
-                                    <select id="winner" name="winner" required>
-                                        <option value="" disabled selected>Выберите победителя</option>
-                                        {% for user_id, username in zip(list_user_id, list_user) %}
-                                        <option value="{{ user_id }}">{{ username }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <input type="number" name="winner_score" class="player-score-input" placeholder="Очки" required>
-                                    <button type="button" class="delete-row-btn" aria-hidden="true" disabled>★</button>
+                                    <div class="field-group">
+                                        <label for="winner-scores-toggle">Поля очков</label>
+                                        <div class="toggle-card">
+                                            <p class="toggle-card__copy">Показывать поля очков.</p>
+                                            <label class="switch" for="winner-scores-toggle">
+                                                <input type="checkbox" id="winner-scores-toggle" name="winner_scores_enabled" checked>
+                                                <span class="switch__slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </section>
 
                             <section class="stack-section">
                                 <div class="stack-section__head">
-                                    <h3 class="stack-section__title">Остальные участники</h3>
-                                    <p class="stack-section__copy">
-                                        Когда выберете последнего доступного игрока, форма сама добавит следующую строку.
-                                    </p>
+                                    <h3 class="stack-section__title">Участники матча</h3>
                                 </div>
 
-                                <label for="players-container">Участники и их очки</label>
+                                <label for="players-container">Игроки, статус победы и очки</label>
                                 <div id="players-container" class="players-container"></div>
                             </section>
 
@@ -115,33 +85,6 @@
                             </div>
                         </form>
                     </article>
-
-                    <aside class="form-card">
-                        <div class="eyebrow">Подсказки</div>
-                        <div class="side-list">
-                            <section class="side-note">
-                                <h3 class="side-note__title">Как это работает</h3>
-                                <p class="side-note__copy">
-                                    Поля формы не менялись: бэкенд по-прежнему получит `game_name`, `winner`,
-                                    `winner_score`, `players` и `scores`.
-                                </p>
-                            </section>
-
-                            <section class="side-note">
-                                <h3 class="side-note__title">Динамические строки</h3>
-                                <p class="side-note__copy">
-                                    Логика добавления и удаления игроков сохранена, изменилась только подача и компоновка.
-                                </p>
-                            </section>
-
-                            <section class="side-note">
-                                <h3 class="side-note__title">Тон интерфейса</h3>
-                                <p class="side-note__copy">
-                                    Визуальный язык совпадает с главной и профилем: глубокие тёмные панели, золото и мягкие границы.
-                                </p>
-                            </section>
-                        </div>
-                    </aside>
                 </div>
             </section>
         </div>
@@ -149,14 +92,38 @@
 
     <template id="player-row-template">
         <div class="player-row">
-            <select class="player-select" name="players">
-                <option value="" disabled selected>Выберите участника</option>
-                {% for user_id, username in zip(list_user_id, list_user) %}
-                <option value="{{ user_id }}">{{ username }}</option>
-                {% endfor %}
-            </select>
-            <input type="number" name="scores" class="player-score-input" placeholder="Очки">
-            <button type="button" class="delete-row-btn" aria-label="Удалить участника">×</button>
+            <div class="player-field">
+                <div class="player-field__label">Игрок</div>
+                <select class="player-select" name="players">
+                    <option value="" disabled selected>Выберите участника</option>
+                    {% for user_id, username in zip(list_user_id, list_user) %}
+                    <option value="{{ user_id }}">{{ username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="player-field player-field--score">
+                <div class="player-field__label">Очки</div>
+                <input type="number" name="scores" class="player-score-input" placeholder="Очки">
+            </div>
+
+            <input type="hidden" name="winner_flags" value="false" class="winner-flag-input">
+
+            <div class="player-field">
+                <div class="player-field__label">Статус</div>
+                <label class="winner-toggle" aria-label="Игрок победил">
+                    <input type="checkbox" value="true" class="winner-checkbox">
+                    <span>Победил</span>
+                </label>
+            </div>
+
+            <div class="player-field player-field--remove">
+                <button type="button" class="delete-row-btn" aria-label="Удалить участника">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-1 6h2v8H8V9Zm6 0h2v8h-2V9ZM6 9h2v8H6V9Zm1 11h10a2 2 0 0 0 2-2V7H5v11a2 2 0 0 0 2 2Z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </template>
 
@@ -165,11 +132,14 @@
             const playersContainer = document.getElementById('players-container');
             const template = document.getElementById('player-row-template');
             const form = document.getElementById('create-match-form');
+            const scoresToggle = document.getElementById('winner-scores-toggle');
 
             function addPlayerRow() {
                 const newRow = template.content.cloneNode(true);
                 playersContainer.appendChild(newRow);
                 updateDeleteButtons();
+                syncWinnerFlags();
+                syncScoreVisibility();
             }
 
             function updateDeleteButtons() {
@@ -182,7 +152,53 @@
                 });
             }
 
+            function syncWinnerFlags() {
+                const allRows = playersContainer.querySelectorAll('.player-row');
+                allRows.forEach((row) => {
+                    const checkbox = row.querySelector('.winner-checkbox');
+                    const hiddenFlag = row.querySelector('.winner-flag-input');
+                    hiddenFlag.value = checkbox.checked ? 'true' : 'false';
+                });
+            }
+
+            function syncScoreVisibility() {
+                playersContainer.classList.toggle('scores-hidden', !scoresToggle.checked);
+
+                const allRows = playersContainer.querySelectorAll('.player-row');
+                allRows.forEach((row) => {
+                    const scoreInput = row.querySelector('.player-score-input');
+
+                    if (!scoresToggle.checked) {
+                        scoreInput.dataset.previousValue = scoreInput.value;
+                        scoreInput.value = '';
+                    } else if (scoreInput.dataset.previousValue && !scoreInput.value) {
+                        scoreInput.value = scoreInput.dataset.previousValue;
+                    }
+                });
+            }
+
+            function cleanEmptyRowsBeforeSubmit() {
+                const allRows = Array.from(playersContainer.querySelectorAll('.player-row'));
+
+                allRows.forEach((row) => {
+                    const select = row.querySelector('.player-select');
+                    if (!select.value) {
+                        row.remove();
+                    }
+                });
+
+                if (!playersContainer.querySelector('.player-row')) {
+                    addPlayerRow();
+                }
+
+                updateDeleteButtons();
+                syncWinnerFlags();
+                syncScoreVisibility();
+            }
+
             addPlayerRow();
+
+            scoresToggle.addEventListener('change', syncScoreVisibility);
 
             playersContainer.addEventListener('change', function(event) {
                 if (event.target.matches('.player-select')) {
@@ -191,27 +207,34 @@
                         addPlayerRow();
                     }
                 }
+
+                if (event.target.matches('.winner-checkbox')) {
+                    syncWinnerFlags();
+                }
             });
 
             playersContainer.addEventListener('click', function(event) {
-                if (event.target.matches('.delete-row-btn')) {
+                if (event.target.matches('.delete-row-btn') || event.target.closest('.delete-row-btn')) {
                     if (playersContainer.querySelectorAll('.player-row').length > 1) {
                         event.target.closest('.player-row').remove();
                         updateDeleteButtons();
+                        syncWinnerFlags();
                     }
                 }
             });
 
             form.addEventListener('submit', function(event) {
-                const allPlayerRows = playersContainer.querySelectorAll('.player-row');
                 let validationFailed = false;
 
-                allPlayerRows.forEach(row => {
+                cleanEmptyRowsBeforeSubmit();
+                syncWinnerFlags();
+
+                playersContainer.querySelectorAll('.player-row').forEach(row => {
                     const select = row.querySelector('.player-select');
                     const scoreInput = row.querySelector('.player-score-input');
 
-                    if (select.value && !scoreInput.value) {
-                        alert('Пожалуйста, введите очки для всех выбранных участников.');
+                    if (select.value && scoresToggle.checked && !scoreInput.value) {
+                        alert('Пожалуйста, введите очки для всех участников, если поля очков включены.');
                         scoreInput.focus();
                         validationFailed = true;
                         event.preventDefault();

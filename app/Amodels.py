@@ -1,11 +1,12 @@
 from app import db
 from sqlalchemy.dialects.postgresql import ARRAY
-
+# TODO сделать так что бы у пользователя могло не быть пароля и при первой авторизации запрашивало пароль
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(250), nullable=False)
+    password = db.Column(db.String(250), nullable=True)
     editing = db.Column(db.Boolean, default=False)
+    # description = db.Column(db.String(250), nullable=False)
 
 class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)

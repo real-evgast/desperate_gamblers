@@ -1,15 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уведомление · Desperate Gamblers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<input list="browsers" name="browser" id="browser">
-<datalist id="browsers">
-  <option value="Edge">
-  <option value="Firefox">
-  <option value="Chrome">
-</datalist>
+    <main class="notification-wrap">
+        <section class="hero notification-card">
+            <div class="hero__grid" style="grid-template-columns: 1fr;">
+                <div class="hero__content">
+                    <div class="brand">
+                        <span class="brand__eyebrow">system notice</span>
+                        <span class="brand__name">Desperate Gamblers</span>
+                    </div>
+
+                    <div class="eyebrow">Сообщение системы</div>
+                    <h1 class="hero__title" style="max-width: 14ch;">Важное уведомление</h1>
+                    <p class="notification-card__message">{{ notification }}</p>
+
+                    <div class="notification-actions">
+                        <a href="{{ url_for('index') }}" class="btn-primary">На главную</a>
+                        <a href="{{ url_for('logout') }}" class="btn-secondary">Ко входу</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 </body>
 </html>

@@ -33,42 +33,39 @@ def create_match():
                                        list_user=list_user, list_game=list_games, list_game_id=list_game_id,
                                        list_games_type=list_games_type, zip=zip)
             else:
-                game_id = request.form.get('game_name')
-                winner_id = request.form.get('winner')
-                winner_score = request.form.get('winner_score')
-
+                game_id = int(request.form.get('game_name'))
                 players_ids_str = request.form.getlist('players')
                 players_scores_str = request.form.getlist('scores')
+                winner_flags_str = request.form.getlist('winner_flags')
 
-                if players_scores_str[-1] == "":
-                    players_scores_str.pop(-1)
-
-                players_scores = [int(winner_score)]
-                players_ids = [int(winner_id)]
-
-                if players_scores_str:
-                    for i in players_scores_str:
-                        players_scores.append(int(i))
-
+                players_ids = []
                 if players_ids_str:
                     for i in players_ids_str:
                         players_ids.append(int(i))
 
+                players_scores = []
+                if players_scores_str[0] != '':
+                    for i in players_scores_str:
+                        players_scores.append(int(i))
+
+                winner_flags = []
+                if winner_flags_str:
+                    for i in winner_flags_str:
+                        winner_flags.append(bool(i))
+
                 print(f'game_id = {game_id}\n'
-                      f'players_scores = {players_scores}\n'
-                      f'players_ids = {players_ids}\n')
+                      f'winner_flags  = {winner_flags}\n'
+                      f'player_ids = {players_ids}\n'
+                      f'players_scores = {players_scores}\n')
 
                 new_match = Amodels.Match(scores=players_scores)
                 db.session.add(new_match)
                 db.session.flush()
 
-                for i in players_ids:
-                    if i == players_ids[0]:
-                        db.session.add(Amodels.User_match(user_id=i, match_id=new_match.id, winner_t_f=True))
-                    else:
-                        db.session.add(Amodels.User_match(user_id=i, match_id=new_match.id, winner_t_f=False))
+                for i in range(len(players_ids)):
+                    db.session.add(Amodels.User_match(match_id=new_match.id, user_id=players_ids[i-1], winner_t_f=winner_flags[i-1]))
 
-                db.session.add(Amodels.Game_match(games_id=game_id, match_id=new_match.id))
+                db.session.add(Amodels.Game_match(match_id=new_match.id, games_id=game_id))
                 db.session.commit()
                 return redirect(url_for('index'))
         else:

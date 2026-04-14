@@ -16,7 +16,8 @@ def login():
             session.permanent = True
             return redirect(url_for('index'))
         else:
-            return "Неверный логин или пароль"
+            notification = "Неверный логин или пароль"
+            return render_template('notification.html', notification=notification)
     else:
         if 'user_id' not in session:
             return render_template('login.html')

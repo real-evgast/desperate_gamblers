@@ -7,50 +7,20 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <main class="auth-layout">
-        <section class="auth-side">
-            <div class="auth-side__content">
+    <main class="auth-layout auth-layout--single">
+        <section class="auth-card auth-card--wide">
+            <div class="auth-card__head">
                 <div class="brand">
                     <span class="brand__eyebrow">private tables</span>
                     <span class="brand__name">Desperate Gamblers</span>
                 </div>
 
-                <h1 class="auth-title">Вход в закрытый зал матчей</h1>
-                <p class="auth-copy">
-                    Вся история партий, результаты и личные профили собраны в одном тёмном интерфейсе.
-                    Войдите в аккаунт, чтобы открыть столы, участников и последние матчи.
-                </p>
-
-                <div class="auth-kpis">
-                    <div class="auth-kpi">
-                        <div class="auth-kpi__value">01</div>
-                        <div class="auth-kpi__label">Аккаунт на игрока</div>
-                    </div>
-                    <div class="auth-kpi">
-                        <div class="auth-kpi__value">24/7</div>
-                        <div class="auth-kpi__label">Доступ к истории</div>
-                    </div>
-                    <div class="auth-kpi">
-                        <div class="auth-kpi__value">Dark</div>
-                        <div class="auth-kpi__label">Нуар атмосфера</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pill-list">
-                <span class="pill">Матчи</span>
-                <span class="pill">Игроки</span>
-                <span class="pill">Профили</span>
-            </div>
-        </section>
-
-        <section class="auth-card">
-            <div class="auth-card__head">
                 <div class="eyebrow">Вход</div>
                 <h2 class="auth-card__title">С возвращением</h2>
                 <p class="auth-card__copy">
                     Используйте свой логин и пароль, чтобы продолжить работу с матчами.
                 </p>
+
             </div>
 
             <form method="POST" class="auth-form">

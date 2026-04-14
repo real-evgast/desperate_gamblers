@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,6 @@
             <nav class="topbar__nav">
                 <a href="{{ url_for('profile') }}" class="nav-link">Профиль</a>
                 <a href="{{ url_for('create_match') }}" class="nav-link">Создать матч</a>
-                <a href="{{ url_for('logout') }}" class="nav-link nav-link--accent">Выйти</a>
             </nav>
         </div>
     </header>
@@ -29,14 +28,9 @@
                     <div class="hero__content">
                         <div class="eyebrow">Журнал партий</div>
                         <h1 class="hero__title">Тёмный зал последних матчей</h1>
-                        <p class="hero__text">
-                            Новый интерфейс собран вокруг карточек партий, быстрой навигации и спокойной ночной атмосферы.
-                            Всё осталось совместимо с текущим Flask-бэкендом и данными матчей.
-                        </p>
 
                         <div class="hero__actions">
                             <a href="{{ url_for('create_match') }}" class="btn-primary">Создать новую партию</a>
-                            <a href="{{ url_for('profile') }}" class="btn-secondary">Открыть профиль</a>
                         </div>
                     </div>
 
@@ -45,12 +39,6 @@
                             <div class="stat-card__label">Всего матчей</div>
                             <div class="stat-card__value">{{ parties|length }}</div>
                             <div class="stat-card__note">Все записи, которые сейчас доступны на главной странице.</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-card__label">Режим</div>
-                            <div class="stat-card__value">Casino Noir</div>
-                            <div class="stat-card__note">Новый тёмный интерфейс с мягкими акцентами и карточной композицией.</div>
                         </div>
                     </aside>
                 </div>
@@ -61,22 +49,15 @@
                     <div>
                         <div class="eyebrow">История</div>
                         <h2 class="section-title">Последние партии</h2>
-                        <p class="section-copy">
-                            Карточки остаются совместимыми даже если часть данных в матче не заполнена полностью.
-                        </p>
-                    </div>
-
-                    <div class="section-actions">
-                        <a href="{{ url_for('create_match') }}" class="inline-action">+ Новая партия</a>
                     </div>
                 </div>
 
                 {% if parties %}
                 <div class="matches-grid">
                     {% for party in parties %}
-                    {% set players = party.player_list.split(', ') if party.player_list else [] %}
-                    {% set winner_name = party.result if party.result else 'Победитель не указан' %}
-                    {% set all_players = [winner_name] + players %}
+                    {% set winners = party.result.split(', ') if party.result else [] %}
+                    {% set losers = party.player_list.split(', ') if party.player_list else [] %}
+                    {% set participants = winners + losers %}
                     {% set scores = party.scores if party.scores else [] %}
                     <article class="match-card">
                         <div class="match-card__head">
@@ -90,30 +71,42 @@
                         </div>
 
                         <div class="match-card__players">
-                            {% if scores %}
-                                {% for score in scores %}
-                                {% set player_name = all_players[loop.index0] if loop.index0 < all_players|length else 'Игрок ' ~ loop.index %}
-                                <div class="player-chip {% if loop.first %}player-chip--winner{% endif %}">
+                            {% if participants %}
+                                {% for player_name in participants %}
+                                {% set is_winner = loop.index0 < winners|length %}
+                                {% set score = scores[loop.index0] if loop.index0 < scores|length else none %}
+                                <div class="player-chip {% if is_winner %}player-chip--winner{% endif %}">
                                     <div class="player-chip__name">
-                                        {% if loop.first %}
+                                        {% if is_winner %}
                                         <span class="winner-badge">★</span>
                                         {% endif %}
-                                        <span class="player-name-text">{{ player_name }}</span>
+                                        <div class="player-chip__meta">
+                                            <span class="player-name-text">{{ player_name }}</span>
+                                            {% if is_winner %}
+                                            <span class="player-role player-role--winner">Победитель</span>
+                                            {% else %}
+                                            <span class="player-role player-role--loser">Участник</span>
+                                            {% endif %}
+                                        </div>
                                     </div>
 
-                                    {% if score > 0 %}
-                                    <span class="score-pill score-pill--positive">+{{ score }}</span>
-                                    {% elif score < 0 %}
-                                    <span class="score-pill score-pill--negative">{{ score }}</span>
+                                    {% if score is not none %}
+                                        {% if score > 0 %}
+                                        <span class="score-pill score-pill--positive">+{{ score }}</span>
+                                        {% elif score < 0 %}
+                                        <span class="score-pill score-pill--negative">{{ score }}</span>
+                                        {% else %}
+                                        <span class="score-pill score-pill--neutral">{{ score }}</span>
+                                        {% endif %}
                                     {% else %}
-                                    <span class="score-pill score-pill--neutral">{{ score }}</span>
+                                    <span class="score-pill score-pill--neutral">Без очков</span>
                                     {% endif %}
                                 </div>
                                 {% endfor %}
                             {% else %}
                             <div class="empty-state">
-                                <h4 class="empty-state__title">Очки пока не заполнены</h4>
-                                <p>Матч есть в базе, но бэкенд ещё не передал полный набор данных для отображения результатов.</p>
+                                <h4 class="empty-state__title">Участники пока не переданы</h4>
+                                <p>Матч есть в базе, но список победителей и игроков для него пока не заполнен.</p>
                             </div>
                             {% endif %}
                         </div>

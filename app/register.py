@@ -12,10 +12,12 @@ def register():
         try:
             db.session.add(new_user)
             db.session.commit()
-            return f"Пользователь {username} успешно зарегистрирован!"
+            notification = "Пользователь {username} успешно зарегистрирован!"
+            return render_template('notification.html', notification=notification)
         except Exception:
             db.session.rollback()
-            return f"Ошибка при регистрации: логин уже занят."
+            notification = "Ошибка при регистрации: логин уже занят."
+            return render_template('notification.html', notification=notification)
     else:
         if 'user_id' not in session:
             return render_template('register.html')

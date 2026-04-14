@@ -16,7 +16,6 @@
 
             <nav class="topbar__nav">
                 <a href="{{ url_for('index') }}" class="nav-link">Главная</a>
-                <a href="{{ url_for('logout') }}" class="nav-link nav-link--accent">Выйти</a>
             </nav>
         </div>
     </header>
@@ -24,12 +23,12 @@
     <main class="page">
         <div class="site-shell">
             <section class="hero">
-                <div class="hero__grid">
+                <div class="hero__grid" style="grid-template-columns: 1fr;">
                     <div class="hero__content">
                         <div class="eyebrow">Личный кабинет</div>
                         <h1 class="profile-name">{{ user.username }}</h1>
                         <p class="profile-copy">
-                            Здесь собран ваш игровой профиль: идентификатор, логин и быстрый доступ назад к истории матчей.
+                            Здесь собран ваш игровой профиль: логин и быстрый доступ назад к истории матчей.
                         </p>
 
                         <div class="profile-actions">
@@ -37,20 +36,6 @@
                             <a href="{{ url_for('logout') }}" class="btn-secondary">Выйти из аккаунта</a>
                         </div>
                     </div>
-
-                    <aside class="hero__aside">
-                        <div class="stat-card">
-                            <div class="stat-card__label">Ваш ID</div>
-                            <div class="stat-card__value mono">#{{ user.id }}</div>
-                            <div class="stat-card__note">Уникальный номер игрока в системе.</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-card__label">Статус</div>
-                            <div class="stat-card__value">Online</div>
-                            <div class="stat-card__note">Профиль открыт и готов к просмотру матчей.</div>
-                        </div>
-                    </aside>
                 </div>
             </section>
 
@@ -61,7 +46,7 @@
                         <div class="eyebrow">Identity</div>
                         <h2 class="section-title" style="font-size: 30px;">Карточка игрока</h2>
                         <p class="section-copy">
-                            Минималистичный профиль в стиле ночного клуба: тёмные панели, акцентное золото и чёткая иерархия данных.
+                            Описание игрока: здесь будет ваш персональный текст о себе, стиле игры и достижениях.
                         </p>
                     </article>
 
