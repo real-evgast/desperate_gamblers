@@ -51,8 +51,11 @@
                                         <label for="game_name">Название игры</label>
                                         <select id="game_name" name="game_name" required>
                                             <option value="" disabled selected>Выберите игру</option>
+                                            {% set current_game_id = current_match.game_id if editing and current_match and current_match.game_id is defined else none %}
+                                            {% set current_game_name = current_match.game_name if editing and current_match and current_match.game_name is defined else none %}
+                                            {% set current_game_alt = current_match.game if editing and current_match and current_match.game is defined else none %}
                                             {% for game_id, game_name in zip(list_game_id, list_game) %}
-                                            <option value="{{ game_id }}">{{ game_name }}</option>
+                                            <option value="{{ game_id }}" {% if editing and current_match and ((current_game_id is not none and (game_id|string) == (current_game_id|string)) or (current_game_name is not none and (game_id|string) == (current_game_name|string)) or (current_game_name is not none and (game_name|string) == (current_game_name|string)) or (current_game_alt is not none and (game_name|string) == (current_game_alt|string))) %}selected{% endif %}>{{ game_name }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -133,13 +136,142 @@
             const template = document.getElementById('player-row-template');
             const form = document.getElementById('create-match-form');
             const scoresToggle = document.getElementById('winner-scores-toggle');
+            const isEditing = {{ 'true' if editing else 'false' }};
+            const currentMatch = {% if editing and current_match %}{
+                game_id: {{ current_match.game_id|default('', true)|tojson }},
+                game_name: {{ current_match.game_name|default('', true)|tojson }},
+                game: {{ current_match.game|default('', true)|tojson }},
+                result: {{ current_match.result|default([], true)|tojson }},
+                winners: {{ current_match.winners|default([], true)|tojson }},
+                winner_list: {{ current_match.winner_list|default([], true)|tojson }},
+                player_list: {{ current_match.player_list|default([], true)|tojson }},
+                losers: {{ current_match.losers|default([], true)|tojson }},
+                participants: {{ current_match.participants|default([], true)|tojson }},
+                players: {{ current_match.players|default([], true)|tojson }},
+                scores: {{ current_match.scores|default([], true)|tojson }}
+            }{% else %}null{% endif %};
 
-            function addPlayerRow() {
+            function normalizeArray(value) {
+                if (Array.isArray(value)) {
+                    return value.filter((item) => item !== null && item !== undefined && String(item).trim() !== '');
+                }
+
+                if (typeof value === 'string') {
+                    return value
+                        .split(',')
+                        .map((item) => item.trim())
+                        .filter(Boolean);
+                }
+
+                return [];
+            }
+
+            function setSelectByValueOrText(select, rawValue) {
+                const target = String(rawValue ?? '').trim();
+                if (!target) {
+                    return false;
+                }
+
+                const directOption = Array.from(select.options).find((option) => option.value === target);
+                if (directOption) {
+                    select.value = directOption.value;
+                    return true;
+                }
+
+                const textOption = Array.from(select.options).find((option) => option.textContent.trim() === target);
+                if (textOption) {
+                    select.value = textOption.value;
+                    return true;
+                }
+
+                return false;
+            }
+
+            function addPlayerRow(prefillData) {
                 const newRow = template.content.cloneNode(true);
+                const row = newRow.querySelector('.player-row');
                 playersContainer.appendChild(newRow);
+
+                if (prefillData && row) {
+                    const playerSelect = row.querySelector('.player-select');
+                    const scoreInput = row.querySelector('.player-score-input');
+                    const winnerCheckbox = row.querySelector('.winner-checkbox');
+                    const hiddenFlag = row.querySelector('.winner-flag-input');
+
+                    setSelectByValueOrText(playerSelect, prefillData.player);
+
+                    if (prefillData.score !== null && prefillData.score !== undefined && String(prefillData.score).trim() !== '') {
+                        scoreInput.value = String(prefillData.score).trim();
+                    }
+
+                    winnerCheckbox.checked = Boolean(prefillData.isWinner);
+                    hiddenFlag.value = winnerCheckbox.checked ? 'true' : 'false';
+                }
+
                 updateDeleteButtons();
                 syncWinnerFlags();
                 syncScoreVisibility();
+                return row;
+            }
+
+            function getPrefillRows(matchData) {
+                const scores = normalizeArray(matchData.scores);
+                const explicitPlayers = normalizeArray(matchData.players);
+
+                if (explicitPlayers.length) {
+                    return explicitPlayers.map((player, index) => {
+                        const isWinner = player && typeof player === 'object'
+                            ? Boolean(player.is_winner ?? player.winner ?? player.isWinner)
+                            : false;
+                        const playerValue = player && typeof player === 'object'
+                            ? (player.id ?? player.user_id ?? player.username ?? player.name ?? '')
+                            : player;
+                        const scoreValue = player && typeof player === 'object'
+                            ? (player.score ?? player.points ?? player.result_score ?? scores[index] ?? '')
+                            : (scores[index] ?? '');
+
+                        return {
+                            player: playerValue,
+                            score: scoreValue,
+                            isWinner: isWinner
+                        };
+                    });
+                }
+
+                const winners = normalizeArray(matchData.result ?? matchData.winners ?? matchData.winner_list);
+                const losers = normalizeArray(matchData.player_list ?? matchData.losers ?? matchData.participants);
+                const winnerRows = winners.map((player, index) => ({
+                    player: player,
+                    score: scores[index] ?? '',
+                    isWinner: true
+                }));
+                const loserRows = losers.map((player, index) => ({
+                    player: player,
+                    score: scores[winners.length + index] ?? '',
+                    isWinner: false
+                }));
+
+                return winnerRows.concat(loserRows);
+            }
+
+            function prefillEditingForm(matchData) {
+                const gameSelect = document.getElementById('game_name');
+                setSelectByValueOrText(gameSelect, matchData.game_id ?? matchData.game_name ?? matchData.game ?? '');
+
+                const rows = getPrefillRows(matchData);
+                const hasScoreData = rows.some((row) => row.score !== null && row.score !== undefined && String(row.score).trim() !== '');
+
+                if (!hasScoreData) {
+                    scoresToggle.checked = false;
+                }
+
+                if (rows.length) {
+                    rows.forEach((rowData) => addPlayerRow(rowData));
+                } else {
+                    addPlayerRow();
+                }
+
+                addPlayerRow();
             }
 
             function updateDeleteButtons() {
@@ -196,7 +328,11 @@
                 syncScoreVisibility();
             }
 
-            addPlayerRow();
+            if (isEditing && currentMatch) {
+                prefillEditingForm(currentMatch);
+            } else {
+                addPlayerRow();
+            }
 
             scoresToggle.addEventListener('change', syncScoreVisibility);
 

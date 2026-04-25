@@ -19,4 +19,4 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=31)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from . import profile, logout, create_match, register, index, login
+from . import profile, logout, create_match, register, index, login, delete_match

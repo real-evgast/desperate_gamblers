@@ -82,6 +82,10 @@ main {
     display: block;
 }
 
+.page-shell {
+    transition: filter 180ms ease;
+}
+
 .site-shell {
     width: var(--content-width);
     margin: 0 auto;
@@ -357,6 +361,7 @@ main {
 
 .btn-primary,
 .btn-secondary,
+.btn-edit,
 .btn-ghost,
 .btn-danger,
 .inline-action {
@@ -380,11 +385,13 @@ main {
 
 .btn-primary:hover,
 .btn-secondary:hover,
+.btn-edit:hover,
 .btn-ghost:hover,
 .btn-danger:hover,
 .inline-action:hover,
 .btn-primary:focus-visible,
 .btn-secondary:focus-visible,
+.btn-edit:focus-visible,
 .btn-ghost:focus-visible,
 .btn-danger:focus-visible,
 .inline-action:focus-visible {
@@ -395,6 +402,12 @@ main {
     color: var(--text-primary);
     border-color: var(--border);
     background: rgba(255, 255, 255, 0.04);
+}
+
+.btn-edit {
+    color: #eaf3ff;
+    border-color: rgba(84, 152, 255, 0.34);
+    background: linear-gradient(135deg, rgba(84, 152, 255, 0.44), rgba(36, 91, 187, 0.44));
 }
 
 .btn-ghost {
@@ -463,6 +476,55 @@ main {
 .match-card__players {
     display: grid;
     gap: 10px;
+}
+
+.match-card__actions {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.match-action-form {
+    margin: 0;
+}
+
+.icon-action-btn {
+    width: 46px;
+    min-height: 46px;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.icon-action-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    display: block;
+}
+
+.icon-action-btn--edit {
+    color: #eaf3ff;
+    border-color: rgba(84, 152, 255, 0.34);
+    background: linear-gradient(135deg, rgba(84, 152, 255, 0.44), rgba(36, 91, 187, 0.44));
+}
+
+.icon-action-btn--delete {
+    color: #fff0f0;
+    border-color: rgba(209, 100, 100, 0.3);
+    background: linear-gradient(135deg, rgba(209, 100, 100, 0.36), rgba(111, 29, 49, 0.4));
+}
+
+.icon-action-btn:hover,
+.icon-action-btn:focus-visible {
+    transform: translateY(-1px);
+    filter: brightness(1.07);
 }
 
 .player-chip {
@@ -699,7 +761,8 @@ label {
 input[type="text"],
 input[type="password"],
 input[type="number"],
-select {
+select,
+textarea {
     width: 100%;
     min-height: 54px;
     padding: 0 18px;
@@ -715,11 +778,33 @@ input::placeholder {
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     outline: none;
     border-color: rgba(221, 184, 112, 0.46);
     box-shadow: 0 0 0 4px rgba(221, 184, 112, 0.12);
     background: rgba(255, 255, 255, 0.06);
+}
+
+.profile-description-form {
+    display: grid;
+    gap: 12px;
+}
+
+.profile-description-label {
+    margin-top: 6px;
+}
+
+.profile-description-input {
+    min-height: 160px;
+    padding: 14px 18px;
+    resize: vertical;
+}
+
+.profile-description-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .footer-link {
@@ -1034,6 +1119,59 @@ select:focus {
     margin-top: 28px;
 }
 
+.confirm-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+}
+
+.confirm-modal[hidden] {
+    display: none;
+}
+
+.confirm-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.52);
+}
+
+.confirm-modal__card {
+    position: relative;
+    z-index: 1;
+    width: min(560px, 100%);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: linear-gradient(150deg, rgba(22, 19, 28, 0.98), rgba(9, 8, 13, 0.98));
+    box-shadow: var(--shadow-lg);
+}
+
+.confirm-modal__title {
+    margin: 0;
+    font-size: 28px;
+}
+
+.confirm-modal__text {
+    margin: 14px 0 0;
+    color: var(--text-secondary);
+}
+
+.confirm-modal__actions {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+body.modal-open .page-shell {
+    filter: blur(7px);
+    pointer-events: none;
+    user-select: none;
+}
+
 .delete-row-btn {
     width: 52px;
     min-height: 52px;
@@ -1204,5 +1342,18 @@ select:focus {
 
     .matches-grid {
         grid-template-columns: 1fr;
+    }
+
+    .match-card__actions {
+        flex-direction: column;
+    }
+
+    .match-card__actions .match-action-form {
+        width: 100%;
+    }
+
+    .match-card__actions .icon-action-btn {
+        width: 100%;
+        border-radius: 14px;
     }
 }

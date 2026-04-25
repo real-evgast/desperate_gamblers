@@ -45,9 +45,20 @@
                         <div class="avatar-shell">DG</div>
                         <div class="eyebrow">Identity</div>
                         <h2 class="section-title" style="font-size: 30px;">Карточка игрока</h2>
-                        <p class="section-copy">
-                            Описание игрока: здесь будет ваш персональный текст о себе, стиле игры и достижениях.
-                        </p>
+
+                        <form method="POST" class="profile-description-form">
+                            <label for="description" class="profile-description-label">Описание игрока</label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                class="profile-description-input"
+                                maxlength="250"
+                                placeholder="Расскажите о себе, стиле игры и достижениях"
+                            >{{ user.description or '' }}</textarea>
+                            <div class="profile-description-actions">
+                                <button type="submit" class="btn-primary">Сохранить описание</button>
+                            </div>
+                        </form>
                     </article>
 
                     <article class="profile-card">

@@ -54,6 +54,7 @@ postgresql://postgres:1984@localhost:5432/postgres
 flask db init
 flask db migrate -m "init"
 flask db upgrade
+
 ```
 
 ### 5. Запуск
@@ -100,13 +101,6 @@ desperate_gamblers/
       └─ notification.html
 ```
 
-## Планы
 
-- улучшить серверную валидацию данных матча
-- добавить редактирование описания игрока в профиле
-- вынести секреты и строку подключения в переменные окружения
-- добавить тесты (unit + интеграционные)
 
 ---
-
-Если хочешь, могу следующим шагом сделать ещё версию README на английском и добавить бейджи (Python, Flask, PostgreSQL, license).
