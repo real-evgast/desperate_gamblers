@@ -105,5 +105,5 @@ def create_match():
                     db.session.commit()
                     return redirect(url_for('index'))
         else:
-            notification = "Администратор сайта ещё не дал вам доступ к сайту, если вы случайный пользователь то вы его никогда и не получите. А если мой друг - то ждите :)"
+            notification = "Какой не угомонный :)"
             return render_template('notification.html', notification=notification)

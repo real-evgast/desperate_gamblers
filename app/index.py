@@ -14,14 +14,15 @@ def index():
             if user.editing:
                 parties_data = Amodels.Match.query.all()
                 parties_data.reverse()
-                res = make_response(render_template('index.html', parties=parties_data))
+                res = make_response(render_template('index.html', parties=parties_data, user=user))
                 res.set_cookie('match_id_for_editing', max_age=0)
+                res.set_cookie('match_id_for_delete', max_age=0)
                 return res
             else:
                 notification = "Администратор сайта ещё не дал вам доступ к сайту, если вы случайный пользователь то вы его никогда и не получите. А если мой друг - то ждите :)"
                 return render_template('notification.html', notification=notification)
         else:
-            type = request.form.get('type')
+            type = int(request.form.get('type'))
             match_id = request.form.get('match_id')
             if type == 2:
                 # return render_template('notification.html', notification=data)

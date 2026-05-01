@@ -7,44 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <main class="auth-layout">
-        <section class="auth-side">
-            <div class="auth-side__content">
-                <div class="brand">
-                    <span class="brand__eyebrow">house account</span>
-                    <span class="brand__name">Desperate Gamblers</span>
-                </div>
-
-                <div class="eyebrow">Новый участник</div>
-                <h1 class="auth-title">Создайте доступ к личному профилю</h1>
-                <p class="auth-copy">
-                    Регистрация открывает вход в закрытый интерфейс проекта: карточки матчей, личную страницу
-                    игрока и управление результатами внутри тёмного клуба.
-                </p>
-
-                <div class="auth-kpis">
-                    <div class="auth-kpi">
-                        <div class="auth-kpi__value">ID</div>
-                        <div class="auth-kpi__label">Личный профиль</div>
-                    </div>
-                    <div class="auth-kpi">
-                        <div class="auth-kpi__value">Safe</div>
-                        <div class="auth-kpi__label">Отдельный вход</div>
-                    </div>
-                    <div class="auth-kpi">
-                        <div class="auth-kpi__value">Club</div>
-                        <div class="auth-kpi__label">Закрытый доступ</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pill-list">
-                <span class="pill">Тёмная тема</span>
-                <span class="pill">Новый аккаунт</span>
-                <span class="pill">История партий</span>
-            </div>
-        </section>
-
+    <main class="auth-layout auth-layout--single">
         <section class="auth-card">
             <div class="auth-card__head">
                 <div class="eyebrow">Регистрация</div>
@@ -73,6 +36,11 @@
                 <div class="field-group">
                     <label for="password">Пароль</label>
                     <input type="password" id="password" name="password" placeholder="Придумайте пароль" required>
+                </div>
+
+                <div class="field-group">
+                    <label for="description">Описание</label>
+                    <textarea id="description" name="description" rows="4" placeholder="Расскажите о себе"></textarea>
                 </div>
 
                 <div class="auth-actions">

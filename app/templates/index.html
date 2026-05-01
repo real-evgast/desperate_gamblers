@@ -16,8 +16,8 @@
                 </a>
 
                 <nav class="topbar__nav">
-                    <a href="{{ url_for('profile') }}" class="nav-link">Профиль</a>
-                    <a href="{{ url_for('create_match') }}" class="nav-link">Создать матч</a>
+                    <a href="{{ url_for('profile', name_user=user.username) }}" class="nav-link">Профиль</a>
+                    <a href="{{ url_for('create_match') }}" class="nav-link">Создать матч</a>0
                 </nav>
             </div>
         </header>
@@ -82,7 +82,10 @@
                                             <span class="winner-badge">★</span>
                                             {% endif %}
                                             <div class="player-chip__meta">
-                                                <span class="player-name-text">{{ player_name }}</span>
+                                                <a
+                                                    class="player-name-text player-name-link"
+                                                    href="{{ url_for('profile', name_user=player_name) }}"
+                                                >{{ player_name }}</a>
                                                 {% if is_winner %}
                                                 <span class="player-role player-role--winner">Победитель</span>
                                                 {% else %}

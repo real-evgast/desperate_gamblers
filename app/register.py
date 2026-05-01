@@ -7,12 +7,13 @@ def register():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password'); hashed_password = generate_password_hash(password)
-        new_user = Amodels.User(username=username, password=hashed_password)
+        description = request.form.get('description')
+        new_user = Amodels.User(username=username, password=hashed_password, description=description)
 
         try:
             db.session.add(new_user)
             db.session.commit()
-            notification = "Пользователь {username} успешно зарегистрирован!"
+            notification = f"Пользователь {username} успешно зарегистрирован!"
             return render_template('notification.html', notification=notification)
         except Exception:
             db.session.rollback()

@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    {% set played_without_wins = participated - participated_wins %}
+    {% set winrate = ((participated_wins / participated) * 100) | round(0) if participated else 0 %}
+
     <header class="topbar">
         <div class="topbar__inner">
             <a href="{{ url_for('index') }}" class="brand">
@@ -28,7 +31,7 @@
                         <div class="eyebrow">Личный кабинет</div>
                         <h1 class="profile-name">{{ user.username }}</h1>
                         <p class="profile-copy">
-                            Здесь собран ваш игровой профиль: логин и быстрый доступ назад к истории матчей.
+                            Здесь собран игровой профиль: описание и краткая статистика по матчам без лишнего дублирования.
                         </p>
 
                         <div class="profile-actions">
@@ -46,6 +49,7 @@
                         <div class="eyebrow">Identity</div>
                         <h2 class="section-title" style="font-size: 30px;">Карточка игрока</h2>
 
+                        {% if editing_description %}
                         <form method="POST" class="profile-description-form">
                             <label for="description" class="profile-description-label">Описание игрока</label>
                             <textarea
@@ -59,6 +63,9 @@
                                 <button type="submit" class="btn-primary">Сохранить описание</button>
                             </div>
                         </form>
+                        {% else %}
+                        <p class="profile-copy">{{ user.description or '' }}</p>
+                        {% endif %}
                     </article>
 
                     <article class="profile-card">
@@ -83,6 +90,37 @@
                                 <span class="info-value info-value--muted">Личный профиль</span>
                             </div>
                         </div>
+
+                        <div class="profile-stats-grid">
+                            <article class="profile-stat-tile profile-stat-tile--accent">
+                                <span class="profile-stat-label">Победы</span>
+                                <strong class="profile-stat-value">{{ participated_wins }}</strong>
+                                <p class="profile-stat-copy">Матчи, завершившиеся победой этого игрока.</p>
+                            </article>
+
+                            <article class="profile-stat-tile">
+                                <span class="profile-stat-label">Без победы</span>
+                                <strong class="profile-stat-value">{{ played_without_wins }}</strong>
+                                <p class="profile-stat-copy">Партии, где игрок участвовал, но не выиграл.</p>
+                            </article>
+
+                            <article class="profile-stat-tile">
+                                <span class="profile-stat-label">Матчей в базе</span>
+                                <strong class="profile-stat-value">{{ number_of_matches }}</strong>
+                                <p class="profile-stat-copy">Общее количество матчей, которые сейчас сохранены в системе.</p>
+                            </article>
+
+                            <article class="profile-stat-tile">
+                                <span class="profile-stat-label">Winrate</span>
+                                <strong class="profile-stat-value">{{ winrate }}%</strong>
+                                <p class="profile-stat-copy">Процент побед от всех матчей, в которых этот игрок участвовал.</p>
+                            </article>
+                        </div>
+                        {% if not participated %}
+                        <div class="profile-empty-state" style="margin-top: 26px;">
+                            У этого профиля пока нет сыгранных матчей, поэтому статистика участия ещё пустая.
+                        </div>
+                        {% endif %}
                     </article>
                 </div>
             </section>
