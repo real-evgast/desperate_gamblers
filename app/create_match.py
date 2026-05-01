@@ -2,7 +2,9 @@ import sqlalchemy
 from . import Amodels
 from app import app, db
 from flask import session, render_template, request, redirect, url_for
-@app.route('/create_match', methods = ["GET", "POST"])
+
+
+@app.route('/create_match', methods=["GET", "POST"])
 def create_match():
     if 'user_id' not in session:
         return redirect(url_for('login'))
@@ -105,5 +107,5 @@ def create_match():
                     db.session.commit()
                     return redirect(url_for('index'))
         else:
-            notification = "Какой не угомонный :)"
+            notification = "Какой неугомонный :)"
             return render_template('notification.html', notification=notification)

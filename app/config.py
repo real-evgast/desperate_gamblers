@@ -1,13 +1,41 @@
 import os
-app_dir = os.path.abspath(os.path.dirname(__file__))
 
-class Base_config:
-    SECRET_KEY = "hfjksldjryt6783kmdhfdfgvbnfghddjulpfkikotg654132645kjhfdgghjkfdsdfhkgj645489691065df564sdd65f4sd23ds2wqertyuiosdxcvbnmwedrfghjkpl,oikijnyuhtygvrdf"
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:1984@localhost:5432/postgres'
+
+app_dir = os.path.abspath(os.path.dirname(__file__))
+LOCAL_DATABASE_URL = 'postgresql://postgres:1984@localhost:5432/postgres'
+LOCAL_SECRET_KEY = 'dev-only-secret-key-change-in-production'
+
+
+def normalize_database_url(url):
+    if url and url.startswith('postgres://'):
+        return url.replace('postgres://', 'postgresql://', 1)
+    return url
+
+
+def get_database_url(default=None):
+    return normalize_database_url(
+        os.environ.get('DATABASE_URL')
+        or os.environ.get('POSTGRES_URL')
+        or os.environ.get('POSTGRES_PRISMA_URL')
+        or default
+    )
+
+
+class BaseConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-class DevelopementConfig(Base_config):
-    DEBUG = True
 
-class ProductionConfig(Base_config):
+class DevelopmentConfig(BaseConfig):
+    DEBUG = True
+    SECRET_KEY = os.environ.get('SECRET_KEY', LOCAL_SECRET_KEY)
+    SQLALCHEMY_DATABASE_URI = get_database_url(LOCAL_DATABASE_URL)
+
+
+class DevelopementConfig(DevelopmentConfig):
+    pass
+
+
+class ProductionConfig(BaseConfig):
     DEBUG = False
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = get_database_url()

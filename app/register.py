@@ -2,11 +2,14 @@ from app import app, db
 from flask import render_template, request, session, redirect, url_for
 from werkzeug.security import generate_password_hash
 from . import Amodels
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
-        password = request.form.get('password'); hashed_password = generate_password_hash(password)
+        password = request.form.get('password')
+        hashed_password = generate_password_hash(password)
         description = request.form.get('description')
         new_user = Amodels.User(username=username, password=hashed_password, description=description)
 

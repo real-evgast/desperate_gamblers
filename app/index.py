@@ -19,13 +19,12 @@ def index():
                 res.set_cookie('match_id_for_delete', max_age=0)
                 return res
             else:
-                notification = "Администратор сайта ещё не дал вам доступ к сайту, если вы случайный пользователь то вы его никогда и не получите. А если мой друг - то ждите :)"
+                notification = "Администратор сайта еще не дал вам доступ к сайту. Если вы случайный пользователь, вы его не получите. Если вы мой друг - ждите :)"
                 return render_template('notification.html', notification=notification)
         else:
             type = int(request.form.get('type'))
             match_id = request.form.get('match_id')
             if type == 2:
-                # return render_template('notification.html', notification=data)
                 res = make_response(redirect(url_for('create_match')))
                 res.set_cookie('match_id_for_editing', str(match_id))
                 return res
