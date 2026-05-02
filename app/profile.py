@@ -10,7 +10,16 @@ def profile(name_user):
     if 'user_id' not in session:
         return redirect(url_for('login'))
     else:
+        session_user = Amodels.User.query.get(session['user_id'])
+        if session_user is None:
+            session.clear()
+            return redirect(url_for('login'))
+
         user = Amodels.User.query.filter_by(username=name_user).first()
+        if user is None:
+            notification = f"Пользователь '{name_user}' не найден."
+            return render_template('notification.html', notification=notification), 404
+
         participated_wins = 0
 
         matches = Amodels.User_match.query.filter_by(user_id=user.id).all()
@@ -23,7 +32,7 @@ def profile(name_user):
         number_of_matches = len(Amodels.Match.query.all())
 
         editing_description = False
-        if user.id == session['user_id']:
+        if user.id == session_user.id:
             editing_description = True
 
         if request.method == "GET":

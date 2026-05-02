@@ -2,8 +2,10 @@ import os
 
 
 app_dir = os.path.abspath(os.path.dirname(__file__))
-LOCAL_DATABASE_URL = 'postgresql://postgres:1984@localhost:5432/postgres'
-LOCAL_SECRET_KEY = 'dev-only-secret-key-change-in-production'
+# 'postgresql://postgres:1984@localhost:5432/postgres'
+# 'postgresql://neondb_owner:npg_qKAWD0Rf5brx@ep-royal-frost-amlf6nd4-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require/main'
+LOCAL_DATABASE_URL = 'postgresql://neondb_owner:npg_qKAWD0Rf5brx@ep-royal-frost-amlf6nd4-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+LOCAL_SECRET_KEY = 'hfjdhfjksdhfsjkdfsf46546545456'
 
 
 def normalize_database_url(url):
