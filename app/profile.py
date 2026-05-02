@@ -1,5 +1,6 @@
 from app import app, db
 from flask import redirect, url_for, session, render_template, request
+from urllib.parse import unquote
 from . import Amodels
 from .Amodels import User
 
@@ -15,9 +16,17 @@ def profile(name_user):
             session.clear()
             return redirect(url_for('login'))
 
-        user = Amodels.User.query.filter_by(username=name_user).first()
+        decoded_name_user = name_user
+        for _ in range(2):
+            if '%' not in decoded_name_user:
+                break
+            decoded_name_user = unquote(decoded_name_user)
+
+        user = Amodels.User.query.filter_by(username=decoded_name_user).first()
+        if user is None and decoded_name_user != name_user:
+            user = Amodels.User.query.filter_by(username=name_user).first()
         if user is None:
-            notification = f"Пользователь '{name_user}' не найден."
+            notification = f"Пользователь '{decoded_name_user}' не найден."
             return render_template('notification.html', notification=notification), 404
 
         participated_wins = 0
