@@ -1,7 +1,6 @@
 from app import app, db
 from flask import redirect, url_for, session, render_template, request
 from . import Amodels
-from .Amodels import User
 
 
 # TODO сделать редактирование профиля: видимое Имя (не логин), удаление профиля, сколько выйграл игр -- где участвовал
