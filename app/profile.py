@@ -1,5 +1,6 @@
 from app import app, db
 from flask import redirect, url_for, session, render_template, request
+from urllib.parse import unquote
 from . import Amodels
 
 
@@ -9,7 +10,24 @@ def profile(name_user):
     if 'user_id' not in session:
         return redirect(url_for('login'))
     else:
-        user = Amodels.User.query.filter_by(username=name_user).first()
+        session_user = Amodels.User.query.get(session['user_id'])
+        if session_user is None:
+            session.clear()
+            return redirect(url_for('login'))
+
+        decoded_name_user = name_user
+        for _ in range(2):
+            if '%' not in decoded_name_user:
+                break
+            decoded_name_user = unquote(decoded_name_user)
+
+        user = Amodels.User.query.filter_by(username=decoded_name_user).first()
+        if user is None and decoded_name_user != name_user:
+            user = Amodels.User.query.filter_by(username=name_user).first()
+        if user is None:
+            notification = f"Пользователь '{decoded_name_user}' не найден."
+            return render_template('notification.html', notification=notification), 404
+
         participated_wins = 0
 
         matches = Amodels.User_match.query.filter_by(user_id=user.id).all()
@@ -22,7 +40,7 @@ def profile(name_user):
         number_of_matches = len(Amodels.Match.query.all())
 
         editing_description = False
-        if user.id == session['user_id']:
+        if user.id == session_user.id:
             editing_description = True
 
         if request.method == "GET":
